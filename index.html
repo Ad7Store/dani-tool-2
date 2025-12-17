@@ -3,191 +3,2011 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zaid Explorer | Real API Results</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Zaid Explorer | API Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+    <style>
+        /* ===== CSS RESET & VARIABLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6c5ce7;
+            --primary-light: #a29bfe;
+            --secondary: #fd79a8;
+            --accent: #00b894;
+            --warning: #fdcb6e;
+            --danger: #ff7675;
+            --dark: #1a1a2e;
+            --darker: #16213e;
+            --light: #ffffff;
+            
+            --gradient-primary: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            --gradient-secondary: linear-gradient(135deg, #fd79a8 0%, #ff7675 100%);
+            --gradient-dark: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
+            --gradient-accent: linear-gradient(135deg, #00b894 0%, #55efc4 100%);
+            
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            
+            --radius-lg: 20px;
+            --radius-md: 15px;
+            --radius-sm: 10px;
+            
+            --transition: 0.3s ease;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--darker);
+            color: var(--light);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* ===== ANIMATED BACKGROUND ===== */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.1; }
+            50% { opacity: 1; }
+        }
+
+        /* ===== HEADER STYLES ===== */
+        .main-header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius-lg);
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            animation: slideDown 0.8s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .logo-pulse {
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            color: white;
+            box-shadow: 0 0 30px rgba(108, 92, 231, 0.4);
+            animation: pulse 2s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+
+        .logo-text h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 1px;
+        }
+
+        .tagline {
+            color: var(--primary-light);
+            font-size: 1rem;
+            margin-top: 5px;
+            opacity: 0.9;
+        }
+
+        .stats-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            flex: 1;
+            min-width: 150px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-md);
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: 1px solid var(--glass-border);
+            transition: var(--transition);
+        }
+
+        .stat-card i {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .stat-number {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--light);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* ===== PAGE CONTROLS ===== */
+        .page-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: var(--glass-bg);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--glass-border);
+        }
+
+        .back-btn {
+            padding: 12px 25px;
+            background: var(--glass-bg);
+            border: 2px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            color: var(--light);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            display: none;
+        }
+
+        .back-btn:hover {
+            background: var(--gradient-primary);
+            border-color: transparent;
+            transform: translateY(-3px);
+        }
+
+        .page-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .page-indicator {
+            background: rgba(108, 92, 231, 0.2);
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--glass-border);
+            font-weight: 600;
+            color: var(--primary-light);
+        }
+
+        .pagination {
+            display: flex;
+            gap: 10px;
+        }
+
+        .page-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--glass-bg);
+            border: 2px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            color: var(--light);
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .page-btn:hover:not(.active) {
+            background: rgba(108, 92, 231, 0.2);
+            border-color: var(--primary);
+        }
+
+        .page-btn.active {
+            background: var(--gradient-primary);
+            border-color: transparent;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .content-area {
+            min-height: 500px;
+        }
+
+        /* ===== API GRID (3 ITEMS PER ROW) ===== */
+        .api-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .api-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .api-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .api-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            color: var(--light);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .api-btn:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 25px rgba(108, 92, 231, 0.3);
+        }
+
+        .api-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .api-btn:hover::before {
+            transform: scaleX(1);
+        }
+
+        .btn-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .btn-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--light);
+            line-height: 1.3;
+        }
+
+        .btn-description {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.4;
+            margin-bottom: 10px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .btn-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+
+        .btn-category {
+            padding: 4px 10px;
+            background: rgba(108, 92, 231, 0.15);
+            color: var(--primary-light);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .btn-arrow {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+        }
+
+        /* ===== TOOL DETAIL VIEW ===== */
+        .tool-detail {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .tool-header {
+            background: var(--gradient-dark);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: translateX(-100%);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .tool-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .tool-title-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--radius-md);
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+        }
+
+        .tool-title-text h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tool-description {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            max-width: 800px;
+            line-height: 1.6;
+        }
+
+        .tool-form {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+        }
+
+        .form-title {
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            color: var(--light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-title i {
+            color: var(--accent);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--light);
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .input-group input,
+        .input-group textarea,
+        .input-group select {
+            width: 100%;
+            padding: 14px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--glass-border);
+            border-radius: var(--radius-sm);
+            color: var(--light);
+            font-size: 1rem;
+            transition: var(--transition);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.2);
+        }
+
+        .input-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .submit-btn {
+            flex: 1;
+            padding: 16px;
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: var(--radius-md);
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(108, 92, 231, 0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .clear-btn {
+            padding: 16px 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            color: var(--light);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .clear-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--primary);
+        }
+
+        /* ===== RESULTS DISPLAY ===== */
+        .results-container {
+            margin-top: 30px;
+        }
+
+        .result-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .result-title i {
+            color: var(--accent);
+        }
+
+        /* Audio Results */
+        .audio-result {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: var(--radius-md);
+            padding: 25px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .audio-player {
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        .audio-player audio {
+            width: 100%;
+            border-radius: var(--radius-sm);
+        }
+
+        .download-btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: var(--gradient-accent);
+            color: white;
+            text-decoration: none;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            margin-top: 15px;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 184, 148, 0.4);
+        }
+
+        /* Video Results */
+        .video-result {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: var(--radius-md);
+            padding: 25px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .video-player {
+            width: 100%;
+            aspect-ratio: 16/9;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            margin-bottom: 20px;
+            background: #000;
+        }
+
+        .video-player video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* Image Results */
+        .image-result {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: var(--radius-md);
+            padding: 25px;
+            border: 1px solid var(--glass-border);
+            text-align: center;
+        }
+
+        .image-result img {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: var(--radius-sm);
+            border: 2px solid var(--glass-border);
+            margin-bottom: 20px;
+        }
+
+        /* Quran Results */
+        .quran-result {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: var(--radius-md);
+            padding: 25px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .ayah-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-right: 4px solid var(--primary);
+        }
+
+        .ayah-arabic {
+            font-size: 1.8rem;
+            text-align: right;
+            margin-bottom: 15px;
+            color: var(--light);
+            font-weight: 600;
+            line-height: 1.8;
+        }
+
+        .ayah-translation {
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+
+        /* Wallpaper Results */
+        .wallpaper-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .wallpaper-item {
+            position: relative;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            aspect-ratio: 16/9;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: var(--transition);
+        }
+
+        .wallpaper-item:hover {
+            transform: scale(1.05);
+            border-color: var(--primary);
+        }
+
+        .wallpaper-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Weather Results */
+        .weather-result {
+            background: var(--gradient-dark);
+            border-radius: var(--radius-md);
+            padding: 30px;
+            text-align: center;
+        }
+
+        .weather-temp {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--light);
+            margin-bottom: 10px;
+        }
+
+        /* Text Results */
+        .text-result {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: var(--radius-md);
+            padding: 25px;
+            border: 1px solid var(--glass-border);
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .text-content {
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.8;
+            font-size: 1.1rem;
+            white-space: pre-wrap;
+        }
+
+        /* Error Message */
+        .error-message {
+            background: rgba(255, 118, 117, 0.2);
+            border: 1px solid rgba(255, 118, 117, 0.3);
+            border-radius: var(--radius-md);
+            padding: 25px;
+            text-align: center;
+            color: #ff9ff3;
+        }
+
+        .error-message i {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(108, 92, 231, 0.3);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ===== FOOTER ===== */
+        .main-footer {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            margin-top: 40px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .footer-section h4 {
+            color: var(--light);
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .contact-info p {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .contact-info i {
+            color: var(--primary);
+            width: 16px;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: var(--light);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            transform: translateY(-3px);
+        }
+
+        .social-icon.whatsapp:hover { background: #25D366; }
+        .social-icon.email:hover { background: #EA4335; }
+        .social-icon.website:hover { background: var(--primary); }
+        .social-icon.snapchat:hover { background: #FFFC00; color: #000; }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid var(--glass-border);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        .version {
+            color: var(--primary-light);
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        /* ===== UTILITY CLASSES ===== */
+        .hidden {
+            display: none !important;
+        }
+
+        .show {
+            display: block !important;
+        }
+
+        .mt-20 {
+            margin-top: 20px;
+        }
+
+        .mb-20 {
+            margin-bottom: 20px;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
     <!-- Animated Background -->
-    <div class="bg-animation">
-        <div class="star"></div><div class="star"></div><div class="star"></div>
-        <div class="star"></div><div class="star"></div><div class="star"></div>
-    </div>
+    <div class="bg-animation" id="bgAnimation"></div>
 
-    <!-- Header -->
-    <header class="main-header">
-        <div class="logo-container">
-            <div class="logo-pulse">
-                <i class="fas fa-bolt"></i>
-            </div>
-            <div class="logo-text">
-                <h1>ZAID EXPLORER</h1>
-                <p class="tagline">Real API Results • No JSON • Just Download & Play</p>
-            </div>
-        </div>
-        
-        <div class="stats-container">
-            <div class="stat-card">
-                <i class="fas fa-music"></i>
-                <div class="stat-info">
-                    <span class="stat-number">25+</span>
-                    <span class="stat-label">APIs</span>
+    <div class="container">
+        <!-- Header -->
+        <header class="main-header">
+            <div class="logo-container">
+                <div class="logo-pulse">
+                    <i class="fas fa-bolt"></i>
                 </div>
-            </div>
-            <div class="stat-card">
-                <i class="fas fa-play-circle"></i>
-                <div class="stat-info">
-                    <span class="stat-number">100%</span>
-                    <span class="stat-label">Real Results</span>
-                </div>
-            </div>
-            <div class="stat-card">
-                <i class="fas fa-mobile-alt"></i>
-                <div class="stat-info">
-                    <span class="stat-number">Mobile</span>
-                    <span class="stat-label">Ready</span>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Dashboard -->
-    <main class="dashboard-container">
-        <!-- Current Tool Display -->
-        <div class="current-tool" id="currentTool">
-            <div class="tool-header">
-                <h2><i class="fas fa-bolt"></i> Ready to Use</h2>
-                <p>Select any API below to start using it</p>
-            </div>
-            <div class="tool-display" id="toolDisplay">
-                <div class="empty-state">
-                    <i class="fas fa-rocket"></i>
-                    <h3>Select an API Tool</h3>
-                    <p>Choose from 25+ powerful tools below</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- API Grid - 10 per page -->
-        <div class="api-grid-container">
-            <div class="grid-header">
-                <h3><i class="fas fa-th"></i> All API Tools (10 per page)</h3>
-                <div class="page-indicator" id="pageIndicator">
-                    Page <span id="currentPage">1</span> of <span id="totalPages">3</span>
+                <div class="logo-text">
+                    <h1>ZAID EXPLORER</h1>
+                    <p class="tagline">25+ APIs • Real Results • Mobile Ready</p>
                 </div>
             </div>
             
-            <div class="api-grid" id="apiGrid">
-                <!-- API buttons will be loaded here -->
-            </div>
-            
-            <div class="pagination">
-                <button class="page-btn prev-btn" id="prevBtn" disabled>
-                    <i class="fas fa-chevron-left"></i> Previous
-                </button>
-                <div class="page-numbers" id="pageNumbers">
-                    <!-- Page numbers will be loaded here -->
+            <div class="stats-container">
+                <div class="stat-card">
+                    <i class="fas fa-code"></i>
+                    <div>
+                        <div class="stat-number">25+</div>
+                        <div class="stat-label">API Tools</div>
+                    </div>
                 </div>
-                <button class="page-btn next-btn" id="nextBtn">
-                    Next <i class="fas fa-chevron-right"></i>
-                </button>
+                <div class="stat-card">
+                    <i class="fas fa-mobile-alt"></i>
+                    <div>
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">Mobile Ready</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-bolt"></i>
+                    <div>
+                        <div class="stat-number">Free</div>
+                        <div class="stat-label">To Use</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Controls -->
+        <div class="page-controls">
+            <button class="back-btn" id="backBtn">
+                <i class="fas fa-arrow-left"></i> Back to All Tools
+            </button>
+            
+            <div class="page-info">
+                <div class="page-indicator" id="pageIndicator">Page 1 of 3</div>
+                <div class="pagination" id="pagination"></div>
             </div>
         </div>
 
-        <!-- Quick Access -->
-        <div class="quick-access">
-            <h3><i class="fas fa-bolt"></i> Most Used Tools</h3>
-            <div class="quick-buttons">
-                <button class="quick-btn" data-api="youtube-search">
-                    <i class="fab fa-youtube"></i>
-                    <span>YouTube MP3</span>
-                </button>
-                <button class="quick-btn" data-api="quran">
-                    <i class="fas fa-book-quran"></i>
-                    <span>Quran Reader</span>
-                </button>
-                <button class="quick-btn" data-api="tts">
-                    <i class="fas fa-volume-up"></i>
-                    <span>Text to Speech</span>
-                </button>
-                <button class="quick-btn" data-api="wallpaper">
-                    <i class="fas fa-image"></i>
-                    <span>Wallpapers</span>
-                </button>
-                <button class="quick-btn" data-api="weather">
-                    <i class="fas fa-cloud-sun"></i>
-                    <span>Weather</span>
-                </button>
-            </div>
+        <!-- Main Content Area -->
+        <div class="content-area">
+            <!-- API Grid (3 items per row) -->
+            <div class="api-grid" id="apiGrid"></div>
+            
+            <!-- Tool Detail View -->
+            <div class="tool-detail" id="toolDetail"></div>
         </div>
-    </main>
 
-    <!-- Footer -->
-    <footer class="main-footer">
-        <div class="footer-content">
-            <div class="footer-section about">
-                <div class="footer-logo">
-                    <div class="footer-logo-icon">ZE</div>
+        <!-- Footer -->
+        <footer class="main-footer">
+            <div class="footer-content">
+                <div class="footer-section">
                     <h4>Zaid Explorer</h4>
+                    <p style="color: rgba(255, 255, 255, 0.8);">
+                        Your ultimate destination for real API results. No JSON, just actual media and tools.
+                    </p>
                 </div>
-                <p class="footer-description">
-                    Your ultimate destination for real API results. No JSON, just actual media and tools.
-                </p>
+                
+                <div class="footer-section">
+                    <h4>Contact Developer</h4>
+                    <div class="contact-info">
+                        <p><i class="fas fa-user"></i> Zaid Ashiq</p>
+                        <p><i class="fas fa-phone"></i> +92 329 9931199</p>
+                        <p><i class="fas fa-envelope"></i> zahidashiqusa@gmail.com</p>
+                        <p><i class="fas fa-globe"></i> zaidpage3.vercel.app</p>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Connect</h4>
+                    <div class="social-icons">
+                        <a href="https://wa.me/923299931199" class="social-icon whatsapp" target="_blank">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                        <a href="mailto:zahidashiqusa@gmail.com" class="social-icon email">
+                            <i class="fas fa-envelope"></i>
+                        </a>
+                        <a href="https://zaidpage3.vercel.app" class="social-icon website" target="_blank">
+                            <i class="fas fa-globe"></i>
+                        </a>
+                        <a href="https://snapchat.com/add/zaidbhai_14" class="social-icon snapchat" target="_blank">
+                            <i class="fab fa-snapchat-ghost"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Powered By</h4>
+                    <p style="color: var(--primary-light); font-weight: 700;">David Cyril API</p>
+                    <p style="color: var(--primary-light); font-weight: 700;">Mr. X Zaid</p>
+                </div>
             </div>
             
-            <div class="footer-section contact">
-                <h4>Contact Developer</h4>
-                <div class="contact-info">
-                    <p><i class="fas fa-user"></i> Zaid Ashiq</p>
-                    <p><i class="fas fa-phone"></i> +92 329 9931199</p>
-                    <p><i class="fas fa-envelope"></i> zahidashiqusa@gmail.com</p>
-                    <p><i class="fas fa-globe"></i> zaidpage3.vercel.app</p>
-                </div>
+            <div class="footer-bottom">
+                <p>© 2024 Zaid Explorer | All tools are 100% free | Real Results Edition</p>
+                <p class="version">v4.0 • 3 Items per Row • Detail View</p>
             </div>
-            
-            <div class="footer-section social">
-                <h4>Connect</h4>
-                <div class="social-icons">
-                    <a href="https://wa.me/923299931199" class="social-icon whatsapp" target="_blank">
-                        <i class="fab fa-whatsapp"></i>
-                    </a>
-                    <a href="mailto:zahidashiqusa@gmail.com" class="social-icon email">
-                        <i class="fas fa-envelope"></i>
-                    </a>
-                    <a href="https://zaidpage3.vercel.app" class="social-icon website" target="_blank">
-                        <i class="fas fa-globe"></i>
-                    </a>
-                    <a href="https://snapchat.com/add/zaidbhai_14" class="social-icon snapchat" target="_blank">
-                        <i class="fab fa-snapchat-ghost"></i>
-                    </a>
-                </div>
-            </div>
-            
-            <div class="footer-section powered">
-                <h4>Powered By</h4>
-                <div class="powered-by">
-                    <p>Dani Joiya</p>
-                    <p>Mr. X Zaid</p>
-                </div>
-            </div>
-        </div>
-        
-        <div class="footer-bottom">
-            <p>© 2024 Zaid Explorer | All tools are 100% free | Real Results Edition</p>
-            <p class="version">v3.0 • Mobile Optimized • Free Forever </p>
-        </div>
-    </footer>
-
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-content">
-            <div class="spinner"></div>
-            <p class="loading-text">Loading Awesome Tools...</p>
-        </div>
+        </footer>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        // ===== API CONFIGURATION =====
+        const API_CONFIGS = [
+            // Quran
+            {
+                id: 'quran',
+                name: 'Quran Reader',
+                description: 'Read the Holy Quran with translations',
+                icon: 'fas fa-book-quran',
+                category: 'islamic',
+                endpoint: 'https://apis.davidcyriltech.my.id/quran?surah=',
+                method: 'GET',
+                inputs: [
+                    {
+                        id: 'surah',
+                        label: 'Surah Number (1-114)',
+                        type: 'number',
+                        placeholder: 'Enter surah number...',
+                        required: true,
+                        min: 1,
+                        max: 114,
+                        value: '1'
+                    }
+                ],
+                resultType: 'quran'
+            },
+
+            // Download Tools
+            {
+                id: 'youtube-search',
+                name: 'YouTube MP3',
+                description: 'Download music from YouTube as MP3',
+                icon: 'fab fa-youtube',
+                category: 'download',
+                endpoint: 'https://apis.davidcyriltech.my.id/play?query=',
+                method: 'GET',
+                inputs: [
+                    {
+                        id: 'query',
+                        label: 'Song Name',
+                        type: 'text',
+                        placeholder: 'Enter song name...',
+                        required: true,
+                        value: 'Faded'
+                    }
+                ],
+                resultType: 'audio'
+            },
+            {
+                id: 'youtube-mp4',
+                name: 'YouTube Video',
+                description: 'Download YouTube videos',
+                icon: 'fab fa-youtube',
+                category: 'download',
+                endpoint: 'https://apis.davidcyriltech.my.id/download/ytmp4?url=',
+                method: 'GET',
+                inputs: [
+                    {
+                        id: 'url',
+                        label: 'YouTube URL',
+                        type: 'url',
+                        placeholder: 'https://youtube.com/watch?v=...',
+                        required: true
+                    }
+                ],
+                resultType: 'video'
+            },
+            {
+                id: 'twitter-dl',
+                name: 'Twitter/X Video',
+                description: 'Download videos from Twitter/X',
+                icon: 'fab fa-twitter',
+                category: 'download',
+                endpoint: 'https://apis.davidcyriltech.my.id/twitterV2?url=',
+                method: 'GET',
+                inputs: [
+                    {
+                        id: 'url',
+                        label: 'Twitter/X URL',
+                        type: 'url',
+                        placeholder: 'https://x.com/...',
+                        required: true
+                    }
+                ],
+                resultType: 'video'
+            },
+            {
+                id: 'spotify-dl',
+                name: 'Spotify MP3',
+                description: 'Download MP3 from Spotify',
+                icon: 'fab fa-spotify',
+                category: 'download',
+                endpoint: 'https://apis.davidcyriltech.my.id/spotifydl2?url=',
+                method: 'GET',
+                inputs: [
+                    {
+                        id: 'url',
+                        label: 'Spotify Track URL',
+                        type: 'url',
+                        placeholder: 'https://open.spotify.com/track/...',
+                        required: true
+                    }
+                ],
+                resultType: 'audio'
+            },
+            {
+                id: 'tiktok-dl',
+                name: 'TikTok Video',
+                description: 'Download videos from TikTok',
+                icon: 'fab fa-tiktok',
+                category: 'download',
+                endpoint: 'https://apis.davidcyriltech.my.id/download/tiktok?url=',
+                method: 'GET',
+                inputs: [
+                    {
+                        id: 'url',
+                        label: 'TikTok URL',
+                        type: 'url',
+                        placeholder: 'https://vm.tiktok.com/...',
+                        required: true
+                    }
+                ],
+                resultType: 'video'
+            },
+
+            // Image Tools
+            {
+                id: 'wallpaper',
+                name: 'Wallpaper Search',
+                description: 'Search and download wallpapers',
+                icon: 'fas fa-image',
+                category: 'image',
+                endpoint: 'https://apis.davidcyriltech.my.id/search/wallpaper?text=',
+                method: 'GET',
+                inputs: [
+                    {
+                        id: 'text',
+                        label: 'Search Term',
+                        type: 'text',
+                        placeholder: 'naruto, nature, abstract...',
+                        required: true,
+                        value: 'naruto'
+                    }
+                ],
+                resultType: 'wallpaper'
+            },
+            {
+                id: 'remini',
+                name: 'Image Enhancer',
+                description: 'Enhance image quality',
+                icon: 'fas fa-magic',
+                category: 'image',
+                endpoint: 'https://apis.davidcyriltech.my.id/remini?url=',
+                method: 'GET',
+                inputs: [
+                    {
+                        id: 'url',
+                        label: 'Image URL',
+                        type: 'url',
+                        placeholder: 'https://example.com/image.jpg',
+                        required: true
+                    }
+                ],
+                resultType: 'image'
+            },
+            {
+                id: 'removebg',
+                name: 'Background Remover',
+                description: 'Remove background from images',
+                icon: 'fas fa-cut',
+                category: 'image',
+                endpoint: 'https://apis.davidcyriltech.my.id/removebg?url=',
+                method: 'GET',
+                inputs: [
+                    {
+                        id: 'url',
+                        label: 'Image URL',
+                        type: 'url',
+                        placeholder: 'https://example.com/image.jpg',
+                        required: true
+                    }
+                ],
+                resultType: 'image'
+            },
+
+            // Text Tools
+            {
+                id: 'lyrics',
+                name: 'Lyrics Finder',
+                description: 'Find song lyrics',
+                icon: 'fas fa-music',
+                category: 'text',
+                endpoint: 'https://apis.davidcyriltech.my.id/lyrics?t=',
+                method: 'GET',
+                inputs: [
+                    {
+                        id: 't',
+                        label: 'Song Title',
+                        type: 'text',
+                        placeholder: 'Enter song title...',
+                        required: true,
+                        value: 'Faded'
+                    },
+                    {
+                        id: 'a',
+                        label: 'Artist (optional)',
+                        type: 'text',
+                        placeholder: 'Enter artist name...',
+                        value: 'Alan Walker'
+                    }
+                ],
+                resultType: 'text'
+            },
+            {
+                id: 'tts',
+                name: 'Text to Speech',
+                description: 'Convert text to speech',
+                icon: 'fas fa-volume-up',
+                category: 'text',
+                endpoint: 'https://apis.davidcyriltech.my.id/tts?text=',
+                method: 'GET',
+                inputs: [
+                    {
+                        id: 'text',
+                        label: 'Text to Convert',
+                        type: 'textarea',
+                        placeholder: 'Enter text...',
+                        required: true,
+                        value: 'Hello from Zaid Explorer'
+                    },
+                    {
+                        id: 'voice',
+                        label: 'Voice',
+                        type: 'select',
+                        options: ['Bianca', 'David', 'Emma', 'Brian'],
+                        value: 'Bianca'
+                    }
+                ],
+                resultType: 'audio'
+            },
+            {
+                id: 'tinyurl',
+                name: 'URL Shortener',
+                description: 'Shorten long URLs',
+                icon: 'fas fa-link',
+                category: 'text',
+                endpoint: 'https://apis.davidcyriltech.my.id/tinyurl?url=',
+                method: 'GET',
+                inputs: [
+                    {
+                        id: 'url',
+                        label: 'Long URL',
+                        type: 'url',
+                        placeholder: 'https://very-long-url.com/...',
+                        required: true
+                    }
+                ],
+                resultType: 'text'
+            },
+
+            // Generators
+            {
+                id: 'flux',
+                name: 'AI Image Generator',
+                description: 'Generate AI images from text',
+                icon: 'fas fa-robot',
+                category: 'generator',
+                endpoint: 'https://apis.davidcyriltech.my.id/flux?prompt=',
+                method: 'GET',
+                inputs: [
+                    {
+                        id: 'prompt',
+                        label: 'Image Prompt',
+                        type: 'text',
+                        placeholder: 'Describe the image...',
+                        required: true,
+                        value: 'cat playing with ball'
+                    }
+                ],
+                resultType: 'image'
+            },
+            {
+                id: 'ccgen',
+                name: 'Credit Card Gen',
+                description: 'Generate test credit cards',
+                icon: 'fas fa-credit-card',
+                category: 'generator',
+                endpoint: 'https://apis.davidcyriltech.my.id/tools/ccgen?type=',
+                method: 'GET',
+                inputs: [
+                    {
+                        id: 'type',
+                        label: 'Card Type',
+                        type: 'select',
+                        options: ['MasterCard', 'Visa', 'Amex'],
+                        value: 'MasterCard'
+                    },
+                    {
+                        id: 'amount',
+                        label: 'Amount (1-100)',
+                        type: 'number',
+                        min: 1,
+                        max: 100,
+                        value: '5'
+                    }
+                ],
+                resultType: 'text'
+            },
+
+            // Utilities
+            {
+                id: 'weather',
+                name: 'Weather Check',
+                description: 'Check weather for any city',
+                icon: 'fas fa-cloud-sun',
+                category: 'utility',
+                endpoint: 'https://apis.davidcyriltech.my.id/weather?city=',
+                method: 'GET',
+                inputs: [
+                    {
+                        id: 'city',
+                        label: 'City Name',
+                        type: 'text',
+                        placeholder: 'Enter city name...',
+                        required: true,
+                        value: 'Abuja'
+                    }
+                ],
+                resultType: 'weather'
+            },
+            {
+                id: 'calculator',
+                name: 'Math Calculator',
+                description: 'Calculate expressions',
+                icon: 'fas fa-calculator',
+                category: 'utility',
+                endpoint: 'https://apis.davidcyriltech.my.id/tools/calculate?expr=',
+                method: 'GET',
+                inputs: [
+                    {
+                        id: 'expr',
+                        label: 'Math Expression',
+                        type: 'text',
+                        placeholder: '2+2*3, sqrt(16)',
+                        required: true,
+                        value: '2+2'
+                    }
+                ],
+                resultType: 'text'
+            },
+            {
+                id: 'html2image',
+                name: 'HTML to Image',
+                description: 'Convert HTML to images',
+                icon: 'fas fa-code',
+                category: 'utility',
+                endpoint: 'https://apis.davidcyriltech.my.id/converter/html2image?html=',
+                method: 'GET',
+                inputs: [
+                    {
+                        id: 'html',
+                        label: 'HTML Code',
+                        type: 'textarea',
+                        placeholder: '<h1>Hello World</h1>',
+                        required: true,
+                        value: '<h1>Zaid Explorer</h1><p>API Tool</p>'
+                    }
+                ],
+                resultType: 'image'
+            },
+            {
+                id: 'ssweb',
+                name: 'Website Screenshot',
+                description: 'Take website screenshots',
+                icon: 'fas fa-camera',
+                category: 'utility',
+                endpoint: 'https://apis.davidcyriltech.my.id/ssweb?url=',
+                method: 'GET',
+                inputs: [
+                    {
+                        id: 'url',
+                        label: 'Website URL',
+                        type: 'url',
+                        placeholder: 'https://example.com',
+                        required: true
+                    }
+                ],
+                resultType: 'image'
+            },
+            {
+                id: 'imgscan',
+                name: 'Image Scanner',
+                description: 'Extract text from images',
+                icon: 'fas fa-search',
+                category: 'utility',
+                endpoint: 'https://apis.davidcyriltech.my.id/imgscan?url=',
+                method: 'GET',
+                inputs: [
+                    {
+                        id: 'url',
+                        label: 'Image URL',
+                        type: 'url',
+                        placeholder: 'https://example.com/image.jpg',
+                        required: true
+                    }
+                ],
+                resultType: 'text'
+            },
+            {
+                id: 'obfuscate',
+                name: 'Code Obfuscator',
+                description: 'Obfuscate JavaScript code',
+                icon: 'fas fa-shield-alt',
+                category: 'utility',
+                endpoint: 'https://apis.davidcyriltech.my.id/obfuscate?code=',
+                method: 'GET',
+                inputs: [
+                    {
+                        id: 'code',
+                        label: 'JavaScript Code',
+                        type: 'textarea',
+                        placeholder: 'console.log("Hello");',
+                        required: true,
+                        value: 'console.log("Hello World");'
+                    },
+                    {
+                        id: 'level',
+                        label: 'Obfuscation Level',
+                        type: 'select',
+                        options: ['low', 'medium', 'high'],
+                        value: 'low'
+                    }
+                ],
+                resultType: 'text'
+            },
+            {
+                id: 'bookgen',
+                name: 'Book Cover Gen',
+                description: 'Generate book covers',
+                icon: 'fas fa-book',
+                category: 'utility',
+                endpoint: 'https://apis.davidcyriltech.my.id/generate/book?text=',
+                method: 'GET',
+                inputs: [
+                    {
+                        id: 'text',
+                        label: 'Book Title',
+                        type: 'text',
+                        placeholder: 'Enter book title...',
+                        required: true,
+                        value: 'Zaid Explorer'
+                    },
+                    {
+                        id: 'size',
+                        label: 'Font Size',
+                        type: 'number',
+                        min: 10,
+                        max: 100,
+                        value: '30'
+                    }
+                ],
+                resultType: 'image'
+            },
+            {
+                id: 'upscale',
+                name: 'Image Upscaler',
+                description: 'Upscale image resolution',
+                icon: 'fas fa-expand-alt',
+                category: 'utility',
+                endpoint: 'https://apis.davidcyriltech.my.id/tools/upscale?url=',
+                method: 'GET',
+                inputs: [
+                    {
+                        id: 'url',
+                        label: 'Image URL',
+                        type: 'url',
+                        placeholder: 'https://example.com/image.jpg',
+                        required: true
+                    },
+                    {
+                        id: 'width',
+                        label: 'Width (optional)',
+                        type: 'number',
+                        placeholder: '1920'
+                    },
+                    {
+                        id: 'height',
+                        label: 'Height (optional)',
+                        type: 'number',
+                        placeholder: '1080'
+                    }
+                ],
+                resultType: 'image'
+            }
+        ];
+
+        // ===== GLOBAL VARIABLES =====
+        let currentPage = 1;
+        const itemsPerPage = 9; // 3 items per row × 3 rows
+        let currentApi = null;
+        let currentResults = null;
+
+        // ===== DOM ELEMENTS =====
+        const dom = {
+            apiGrid: document.getElementById('apiGrid'),
+            toolDetail: document.getElementById('toolDetail'),
+            backBtn: document.getElementById('backBtn'),
+            pageIndicator: document.getElementById('pageIndicator'),
+            pagination: document.getElementById('pagination'),
+            bgAnimation: document.getElementById('bgAnimation')
+        };
+
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', () => {
+            createBackgroundStars();
+            renderApiGrid();
+            setupPagination();
+            setupEventListeners();
+        });
+
+        // ===== BACKGROUND ANIMATION =====
+        function createBackgroundStars() {
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.width = `${Math.random() * 3 + 1}px`;
+                star.style.height = star.style.width;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.animationDelay = `${Math.random() * 3}s`;
+                dom.bgAnimation.appendChild(star);
+            }
+        }
+
+        // ===== API GRID RENDER =====
+        function renderApiGrid() {
+            dom.apiGrid.innerHTML = '';
+            
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const apisToShow = API_CONFIGS.slice(startIndex, endIndex);
+            
+            apisToShow.forEach(api => {
+                const apiBtn = document.createElement('button');
+                apiBtn.className = 'api-btn';
+                apiBtn.innerHTML = `
+                    <div class="btn-header">
+                        <div class="btn-icon">
+                            <i class="${api.icon}"></i>
+                        </div>
+                        <div class="btn-title">${api.name}</div>
+                    </div>
+                    <div class="btn-description">${api.description}</div>
+                    <div class="btn-footer">
+                        <span class="btn-category">${api.category}</span>
+                        <span class="btn-arrow"><i class="fas fa-arrow-right"></i></span>
+                    </div>
+                `;
+                
+                apiBtn.addEventListener('click', () => openToolDetail(api));
+                dom.apiGrid.appendChild(apiBtn);
+            });
+            
+            updatePageIndicator();
+        }
+
+        // ===== PAGINATION =====
+        function setupPagination() {
+            const totalPages = Math.ceil(API_CONFIGS.length / itemsPerPage);
+            dom.pagination.innerHTML = '';
+            
+            for (let i = 1; i <= totalPages; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+                pageBtn.textContent = i;
+                pageBtn.addEventListener('click', () => {
+                    currentPage = i;
+                    renderApiGrid();
+                    setupPagination();
+                });
+                dom.pagination.appendChild(pageBtn);
+            }
+            
+            updatePageIndicator();
+        }
+
+        function updatePageIndicator() {
+            const totalPages = Math.ceil(API_CONFIGS.length / itemsPerPage);
+            dom.pageIndicator.textContent = `Page ${currentPage} of ${totalPages}`;
+        }
+
+        // ===== TOOL DETAIL VIEW =====
+        function openToolDetail(api) {
+            currentApi = api;
+            
+            // Hide grid, show detail
+            dom.apiGrid.style.display = 'none';
+            dom.toolDetail.style.display = 'block';
+            dom.backBtn.style.display = 'flex';
+            
+            // Render tool detail
+            dom.toolDetail.innerHTML = `
+                <div class="tool-header">
+                    <div class="tool-title">
+                        <div class="tool-title-icon">
+                            <i class="${api.icon}"></i>
+                        </div>
+                        <div class="tool-title-text">
+                            <h2>${api.name}</h2>
+                            <p class="tool-description">${api.description}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tool-form">
+                    <h3 class="form-title">
+                        <i class="fas fa-cog"></i> Configure Request
+                    </h3>
+                    <form id="apiForm">
+                        ${api.inputs.map(input => renderInputField(input)).join('')}
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="submit-btn">
+                                <i class="fas fa-paper-plane"></i> Submit Request
+                            </button>
+                            <button type="button" class="clear-btn" onclick="clearForm()">
+                                <i class="fas fa-times"></i> Clear
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="results-container" id="resultsContainer"></div>
+            `;
+            
+            // Add form submit handler
+            document.getElementById('apiForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await handleApiSubmit(api);
+            });
+        }
+
+        function renderInputField(input) {
+            if (input.type === 'textarea') {
+                return `
+                    <div class="input-group">
+                        <label>${input.label}${input.required ? ' *' : ''}</label>
+                        <textarea 
+                            id="${input.id}" 
+                            name="${input.id}"
+                            placeholder="${input.placeholder || ''}"
+                            ${input.required ? 'required' : ''}
+                            rows="4"
+                        >${input.value || ''}</textarea>
+                    </div>
+                `;
+            } else if (input.type === 'select') {
+                const options = input.options.map(opt => 
+                    `<option value="${opt}" ${opt === input.value ? 'selected' : ''}>${opt}</option>`
+                ).join('');
+                return `
+                    <div class="input-group">
+                        <label>${input.label}${input.required ? ' *' : ''}</label>
+                        <select id="${input.id}" name="${input.id}" ${input.required ? 'required' : ''}>
+                            ${options}
+                        </select>
+                    </div>
+                `;
+            } else {
+                return `
+                    <div class="input-group">
+                        <label>${input.label}${input.required ? ' *' : ''}</label>
+                        <input 
+                            type="${input.type}" 
+                            id="${input.id}" 
+                            name="${input.id}"
+                            placeholder="${input.placeholder || ''}"
+                            ${input.min ? `min="${input.min}"` : ''}
+                            ${input.max ? `max="${input.max}"` : ''}
+                            ${input.required ? 'required' : ''}
+                            value="${input.value || ''}"
+                        >
+                    </div>
+                `;
+            }
+        }
+
+        // ===== API REQUEST HANDLER =====
+        async function handleApiSubmit(api) {
+            const resultsContainer = document.getElementById('resultsContainer');
+            resultsContainer.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Processing your request...</p>
+                </div>
+            `;
+            
+            const formData = new FormData(document.getElementById('apiForm'));
+            const params = new URLSearchParams();
+            
+            // Build query parameters
+            api.inputs.forEach(input => {
+                const value = formData.get(input.id);
+                if (value) {
+                    params.append(input.id, encodeURIComponent(value));
+                }
+            });
+            
+            try {
+                const url = `${api.endpoint}${params.toString()}${api.endpoint.includes('?') ? '&' : '?'}apikey=`;
+                const response = await fetch(url, { method: api.method });
+                
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                currentResults = data;
+                displayResults(api, data);
+            } catch (error) {
+                displayError(error.message);
+            }
+        }
+
+        // ===== RESULT DISPLAY =====
+        function displayResults(api, data) {
+            const resultsContainer = document.getElementById('resultsContainer');
+            
+            let html = `
+                <h3 class="result-title">
+                    <i class="fas fa-check-circle"></i> Results from ${api.name}
+                </h3>
+            `;
+            
+            switch (api.resultType) {
+                case 'audio':
+                    html += renderAudioResult(data);
+                    break;
+                case 'video':
+                    html += renderVideoResult(data);
+                    break;
+                case 'image':
+                    html += renderImageResult(data);
+                    break;
+                case 'quran':
+                    html += renderQuranResult(data);
+                    break;
+                case 'wallpaper':
+                    html += renderWallpaperResult(data);
+                    break;
+                case 'weather':
+                    html += renderWeatherResult(data);
+                    break;
+                default:
+                    html += renderTextResult(data);
+            }
+            
+            resultsContainer.innerHTML = html;
+            
+            // Scroll to results
+            resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function renderAudioResult(data) {
+            let html = `<div class="audio-result">`;
+            
+            if (data.result) {
+                const audio = data.result;
+                html += `
+                    <h4>${audio.title || 'Audio File'}</h4>
+                    ${audio.duration ? `<p>Duration: ${audio.duration}</p>` : ''}
+                    ${audio.views ? `<p>Views: ${audio.views}</p>` : ''}
+                    
+                    <div class="audio-player">
+                        <audio controls>
+                            <source src="${audio.download_url || audio.url}" type="audio/mpeg">
+                        </audio>
+                    </div>
+                    
+                    <button class="download-btn" onclick="downloadFile('${audio.download_url || audio.url}', '${(audio.title || 'audio').replace(/[^a-z0-9]/gi, '_')}.mp3')">
+                        <i class="fas fa-download"></i> Download MP3
+                    </button>
+                `;
+            } else if (data.downloadMP3) {
+                html += `
+                    <h4>${data.title || 'Spotify Track'}</h4>
+                    
+                    <div class="audio-player">
+                        <audio controls>
+                            <source src="${data.downloadMP3}" type="audio/mpeg">
+                        </audio>
+                    </div>
+                    
+                    <button class="download-btn" onclick="downloadFile('${data.downloadMP3}', '${(data.title || 'spotify_audio').replace(/[^a-z0-9]/gi, '_')}.mp3')">
+                        <i class="fas fa-download"></i> Download MP3
+                    </button>
+                `;
+            }
+            
+            html += `</div>`;
+            return html;
+        }
+
+        function renderVideoResult(data) {
+            let html = `<div class="video-result">`;
+            
+            if (Array.isArray(data.result)) {
+                const videos = data.result;
+                html += `
+                    <h4>Video Available in ${videos.length} Qualities</h4>
+                    <div class="video-player">
+                        <video controls>
+                            <source src="${videos[0].url}" type="video/mp4">
+                        </video>
+                    </div>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px;">
+                `;
+                
+                videos.forEach(video => {
+                    html += `
+                        <button class="download-btn" onclick="downloadFile('${video.url}', 'twitter_video_${video.quality}.mp4')">
+                            <i class="fas fa-download"></i> ${video.quality}
+                        </button>
+                    `;
+                });
+                
+                html += `</div>`;
+            } else if (data.result && data.result.download_url) {
+                const video = data.result;
+                html += `
+                    <h4>${video.title || 'Video File'}</h4>
+                    ${video.quality ? `<p>Quality: ${video.quality}</p>` : ''}
+                    
+                    <div class="video-player">
+                        <video controls>
+                            <source src="${video.download_url}" type="video/mp4">
+                        </video>
+                    </div>
+                    
+                    <button class="download-btn" onclick="downloadFile('${video.download_url}', '${(video.title || 'video').replace(/[^a-z0-9]/gi, '_')}.mp4')">
+                        <i class="fas fa-download"></i> Download ${video.quality || 'Video'}
+                    </button>
+                `;
+            }
+            
+            html += `</div>`;
+            return html;
+        }
+
+        function renderImageResult(data) {
+            return `
+                <div class="image-result">
+                    <img src="${data.url || data.download_link}" alt="Result Image" onerror="this.src='https://via.placeholder.com/400x300?text=Image+Not+Found'">
+                    <button class="download-btn mt-20" onclick="downloadFile('${data.url || data.download_link}', 'image_${Date.now()}.jpg')">
+                        <i class="fas fa-download"></i> Download Image
+                    </button>
+                </div>
+            `;
+        }
+
+        function renderQuranResult(data) {
+            if (!data.surah) return `<div class="error-message"><i class="fas fa-exclamation-circle"></i><h4>No surah data found</h4></div>`;
+            
+            let html = `<div class="quran-result">`;
+            
+            if (data.surah.ayahs) {
+                data.surah.ayahs.forEach(ayah => {
+                    html += `
+                        <div class="ayah-container">
+                            <div class="ayah-arabic">${ayah.text}</div>
+                            <div class="ayah-translation">
+                                <strong>${ayah.numberInSurah}.</strong> ${ayah.translation}
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            
+            html += `</div>`;
+            return html;
+        }
+
+        function renderWallpaperResult(data) {
+            if (!data.wallpapers || data.wallpapers.length === 0) {
+                return `<div class="error-message"><i class="fas fa-exclamation-circle"></i><h4>No wallpapers found</h4></div>`;
+            }
+            
+            let html = `<div class="wallpaper-grid">`;
+            
+            data.wallpapers.forEach((wallpaper, index) => {
+                html += `
+                    <div class="wallpaper-item" onclick="downloadFile('${wallpaper.url}', 'wallpaper_${index + 1}.jpg')">
+                        <img src="${wallpaper.url}" alt="Wallpaper ${index + 1}" loading="lazy">
+                    </div>
+                `;
+            });
+            
+            html += `</div>`;
+            return html;
+        }
+
+        function renderWeatherResult(data) {
+            if (!data.main) return `<div class="error-message"><i class="fas fa-exclamation-circle"></i><h4>No weather data found</h4></div>`;
+            
+            const temp = Math.round(data.main.temp);
+            const desc = data.weather?.[0]?.description || 'Unknown';
+            
+            return `
+                <div class="weather-result">
+                    <div class="weather-temp">${temp}°C</div>
+                    <p style="font-size: 1.2rem; margin-bottom: 20px;">${desc}</p>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                        <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: var(--radius-sm);">
+                            <div style="font-size: 0.9rem; opacity: 0.8;">Humidity</div>
+                            <div style="font-size: 1.5rem; font-weight: 700;">${data.main.humidity}%</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: var(--radius-sm);">
+                            <div style="font-size: 0.9rem; opacity: 0.8;">Wind</div>
+                            <div style="font-size: 1.5rem; font-weight: 700;">${data.wind?.speed || 0} m/s</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderTextResult(data) {
+            let content = '';
+            
+            if (typeof data === 'string') {
+                content = data;
+            } else if (data.lyrics) {
+                content = data.lyrics;
+            } else if (data.short_url) {
+                content = `Short URL: ${data.short_url}`;
+            } else if (data.result) {
+                content = JSON.stringify(data.result, null, 2);
+            } else {
+                content = JSON.stringify(data, null, 2);
+            }
+            
+            return `
+                <div class="text-result">
+                    <div class="text-content">${content}</div>
+                </div>
+            `;
+        }
+
+        function displayError(message) {
+            const resultsContainer = document.getElementById('resultsContainer');
+            resultsContainer.innerHTML = `
+                <div class="error-message">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <h4>Error Occurred</h4>
+                    <p>${message}</p>
+                    <button class="download-btn mt-20" onclick="retryRequest()">
+                        <i class="fas fa-redo"></i> Try Again
+                    </button>
+                </div>
+            `;
+        }
+
+        // ===== UTILITY FUNCTIONS =====
+        function goBack() {
+            dom.apiGrid.style.display = 'grid';
+            dom.toolDetail.style.display = 'none';
+            dom.backBtn.style.display = 'none';
+            currentApi = null;
+            currentResults = null;
+        }
+
+        function clearForm() {
+            if (currentApi) {
+                const form = document.getElementById('apiForm');
+                if (form) form.reset();
+            }
+        }
+
+        function downloadFile(url, filename) {
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            link.target = '_blank';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function retryRequest() {
+            if (currentApi) {
+                document.getElementById('apiForm').dispatchEvent(new Event('submit'));
+            }
+        }
+
+        // ===== EVENT LISTENERS =====
+        function setupEventListeners() {
+            dom.backBtn.addEventListener('click', goBack);
+            
+            // Make functions available globally
+            window.downloadFile = downloadFile;
+            window.clearForm = clearForm;
+            window.retryRequest = retryRequest;
+        }
+    </script>
 </body>
 </html>
