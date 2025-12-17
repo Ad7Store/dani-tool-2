@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zaid Explorer | Real API Results</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="star"></div><div class="star"></div><div class="star"></div>
+        <div class="star"></div><div class="star"></div><div class="star"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="main-header">
+        <div class="logo-container">
+            <div class="logo-pulse">
+                <i class="fas fa-bolt"></i>
+            </div>
+            <div class="logo-text">
+                <h1>ZAID EXPLORER</h1>
+                <p class="tagline">Real API Results • No JSON • Just Download & Play</p>
+            </div>
+        </div>
+        
+        <div class="stats-container">
+            <div class="stat-card">
+                <i class="fas fa-music"></i>
+                <div class="stat-info">
+                    <span class="stat-number">25+</span>
+                    <span class="stat-label">APIs</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-play-circle"></i>
+                <div class="stat-info">
+                    <span class="stat-number">100%</span>
+                    <span class="stat-label">Real Results</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-mobile-alt"></i>
+                <div class="stat-info">
+                    <span class="stat-number">Mobile</span>
+                    <span class="stat-label">Ready</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard -->
+    <main class="dashboard-container">
+        <!-- Current Tool Display -->
+        <div class="current-tool" id="currentTool">
+            <div class="tool-header">
+                <h2><i class="fas fa-bolt"></i> Ready to Use</h2>
+                <p>Select any API below to start using it</p>
+            </div>
+            <div class="tool-display" id="toolDisplay">
+                <div class="empty-state">
+                    <i class="fas fa-rocket"></i>
+                    <h3>Select an API Tool</h3>
+                    <p>Choose from 25+ powerful tools below</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Grid - 10 per page -->
+        <div class="api-grid-container">
+            <div class="grid-header">
+                <h3><i class="fas fa-th"></i> All API Tools (10 per page)</h3>
+                <div class="page-indicator" id="pageIndicator">
+                    Page <span id="currentPage">1</span> of <span id="totalPages">3</span>
+                </div>
+            </div>
+            
+            <div class="api-grid" id="apiGrid">
+                <!-- API buttons will be loaded here -->
+            </div>
+            
+            <div class="pagination">
+                <button class="page-btn prev-btn" id="prevBtn" disabled>
+                    <i class="fas fa-chevron-left"></i> Previous
+                </button>
+                <div class="page-numbers" id="pageNumbers">
+                    <!-- Page numbers will be loaded here -->
+                </div>
+                <button class="page-btn next-btn" id="nextBtn">
+                    Next <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Quick Access -->
+        <div class="quick-access">
+            <h3><i class="fas fa-bolt"></i> Most Used Tools</h3>
+            <div class="quick-buttons">
+                <button class="quick-btn" data-api="youtube-search">
+                    <i class="fab fa-youtube"></i>
+                    <span>YouTube MP3</span>
+                </button>
+                <button class="quick-btn" data-api="quran">
+                    <i class="fas fa-book-quran"></i>
+                    <span>Quran Reader</span>
+                </button>
+                <button class="quick-btn" data-api="tts">
+                    <i class="fas fa-volume-up"></i>
+                    <span>Text to Speech</span>
+                </button>
+                <button class="quick-btn" data-api="wallpaper">
+                    <i class="fas fa-image"></i>
+                    <span>Wallpapers</span>
+                </button>
+                <button class="quick-btn" data-api="weather">
+                    <i class="fas fa-cloud-sun"></i>
+                    <span>Weather</span>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-section about">
+                <div class="footer-logo">
+                    <div class="footer-logo-icon">ZE</div>
+                    <h4>Zaid Explorer</h4>
+                </div>
+                <p class="footer-description">
+                    Your ultimate destination for real API results. No JSON, just actual media and tools.
+                </p>
+            </div>
+            
+            <div class="footer-section contact">
+                <h4>Contact Developer</h4>
+                <div class="contact-info">
+                    <p><i class="fas fa-user"></i> Zaid Ashiq</p>
+                    <p><i class="fas fa-phone"></i> +92 329 9931199</p>
+                    <p><i class="fas fa-envelope"></i> zahidashiqusa@gmail.com</p>
+                    <p><i class="fas fa-globe"></i> zaidpage3.vercel.app</p>
+                </div>
+            </div>
+            
+            <div class="footer-section social">
+                <h4>Connect</h4>
+                <div class="social-icons">
+                    <a href="https://wa.me/923299931199" class="social-icon whatsapp" target="_blank">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                    <a href="mailto:zahidashiqusa@gmail.com" class="social-icon email">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                    <a href="https://zaidpage3.vercel.app" class="social-icon website" target="_blank">
+                        <i class="fas fa-globe"></i>
+                    </a>
+                    <a href="https://snapchat.com/add/zaidbhai_14" class="social-icon snapchat" target="_blank">
+                        <i class="fab fa-snapchat-ghost"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="footer-section powered">
+                <h4>Powered By</h4>
+                <div class="powered-by">
+                    <p>Dani Joiya</p>
+                    <p>Mr. X Zaid</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>© 2024 Zaid Explorer | All tools are 100% free | Real Results Edition</p>
+            <p class="version">v3.0 • Mobile Optimized • Free Forever </p>
+        </div>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <p class="loading-text">Loading Awesome Tools...</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
